@@ -6,8 +6,11 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import classification_report, confusion_matrix, roc_curve, auc
 from sklearn.model_selection import train_test_split
-def model(toi_filtered, td_filtered):
+import seaborn as sns
+import matplotlib.pyplot as plt
 
+
+def model(toi_filtered, td_filtered):
     # Updated features list to match available columns
     features = [
         'pl_orbper',      # Orbital period
@@ -112,24 +115,21 @@ def model(toi_filtered, td_filtered):
     plt.tight_layout()
     plt.show()
 
-    # Confusion Matrix
+    
+   # Confusion Matrix
     cm = confusion_matrix(y_train, train_preds)
     plt.figure(figsize=(8, 6))
-    plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
+    sns.heatmap(cm, annot=True, cmap='Blues', fmt='d')
     plt.title('Confusion Matrix')
-    plt.colorbar()
-    plt.xticks([0, 1], ['Not Planet', 'Planet'])
-    plt.yticks([0, 1], ['Not Planet', 'Planet'])
-    plt.xlabel('Predicted Label')
-    plt.ylabel('True Label')
 
-    # Add numbers to confusion matrix
-    for i in range(2):
-        for j in range(2):
-            plt.text(j, i, str(cm[i, j]), 
-                    ha='center', va='center')
-    plt.tight_layout()
+    plt.xticks([0, 1], ['Not Planet', 'Planet'], rotation=45, ha='center')
+
+    plt.yticks([0, 1], ['Not Planet', 'Planet' ], rotation=45, va='center')
+    plt.xlabel('Predicted Label')
+    
     plt.show()
+
+
 
    # Get TESS predictions (probabilities)
     tess_probs = rf_model.predict_proba(X_test_scaled)[:, 1]  # Get probability of class 1
