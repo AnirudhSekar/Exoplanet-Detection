@@ -3,9 +3,9 @@ def plot_data(toi_filtered, td_filtered):
     # 1. Planet Radius vs Orbital Period
     plt.figure(figsize=(10, 6))
     plt.scatter(toi_filtered['pl_orbper'], toi_filtered['pl_rade'], 
-            alpha=0.5, label='TESS', s=50, color='blue')
+            alpha=0.5, label='TOI', s=50, color='blue')
     plt.scatter(td_filtered['pl_orbper'], td_filtered['pl_rade'], 
-            alpha=0.5, label='Kepler', s=50, color='red')
+            alpha=0.5, label='Overall', s=50, color='red')
     plt.xlabel('Orbital Period (days)')
     plt.ylabel('Planet Radius (Earth Radii)')
     plt.title('Planet Radius vs Orbital Period')
@@ -18,9 +18,9 @@ def plot_data(toi_filtered, td_filtered):
     # 2. Stellar Temperature vs Planet Radius
     plt.figure(figsize=(10, 6))
     plt.scatter(toi_filtered['st_teff'], toi_filtered['pl_rade'],
-            alpha=0.5, label=f'TESS (n={len(toi_filtered)})', s=50, color='blue')
+            alpha=0.5, label=f'TOI (n={len(toi_filtered)})', s=50, color='blue')
     plt.scatter(td_filtered['st_teff'], td_filtered['pl_rade'],
-            alpha=0.5, label=f'Kepler (n={len(td_filtered)})', s=50, color='red')
+            alpha=0.5, label=f'Overall (n={len(td_filtered)})', s=50, color='red')
     plt.xlabel('Stellar Temperature (K)')
     plt.ylabel('Planet Radius (Earth Radii)')
     plt.title('Planet Radius vs Stellar Temperature')
@@ -31,7 +31,7 @@ def plot_data(toi_filtered, td_filtered):
     # 3. Stellar Temperature Distribution
     plt.figure(figsize=(10, 6))
     temp_data = [toi_filtered['st_teff'], td_filtered['st_teff']]
-    plt.boxplot(temp_data, labels=['TESS', 'Kepler'])
+    plt.boxplot(temp_data, labels=['TOI', 'Overall'])
     plt.ylabel('Stellar Temperature (K)')
     plt.title('Stellar Temperature Distribution')
     plt.grid(True, alpha=0.3)
@@ -40,9 +40,9 @@ def plot_data(toi_filtered, td_filtered):
     # 4. Planet Radius Distribution
     plt.figure(figsize=(10, 6))
     plt.hist(toi_filtered['pl_rade'], bins=50, alpha=0.5, 
-            label=f'TESS (n={len(toi_filtered)})', density=True, color='blue')
+            label=f'TOI (n={len(toi_filtered)})', density=True, color='blue')
     plt.hist(td_filtered['pl_rade'], bins=50, alpha=0.5, 
-            label=f'Kepler (n={len(td_filtered)})', density=True, color='red')
+            label=f'Overall (n={len(td_filtered)})', density=True, color='red')
     plt.xlabel('Planet Radius (Earth Radii)')
     plt.ylabel('Density')
     plt.title('Planet Radius Distribution')
@@ -53,9 +53,9 @@ def plot_data(toi_filtered, td_filtered):
     # 5. Transit Duration vs Orbital Period
     plt.figure(figsize=(10, 6))
     plt.scatter(toi_filtered['pl_orbper'], toi_filtered['pl_trandur'],
-            alpha=0.5, label=f'TESS (n={len(toi_filtered)})', s=50, color='blue')
+            alpha=0.5, label=f'TOI (n={len(toi_filtered)})', s=50, color='blue')
     plt.scatter(td_filtered['pl_orbper'], td_filtered['pl_trandur'],
-            alpha=0.5, label=f'Kepler (n={len(td_filtered)})', s=50, color='red')
+            alpha=0.5, label=f'Overall (n={len(td_filtered)})', s=50, color='red')
     plt.xlabel('Orbital Period (days)')
     plt.ylabel('Transit Duration (hours)')
     plt.title('Transit Duration vs Orbital Period')
@@ -69,7 +69,7 @@ def plot_data(toi_filtered, td_filtered):
     plt.scatter(toi_filtered['st_rad'], toi_filtered['pl_rade'],
             alpha=0.5, label='TESS', s=50, color='blue')
     plt.scatter(td_filtered['st_rad'], td_filtered['pl_rade'],
-            alpha=0.5, label='Kepler', s=50, color='red')
+            alpha=0.5, label='Overall', s=50, color='red')
     plt.xlabel('Stellar Radius (Solar Radii)')
     plt.ylabel('Planet Radius (Earth Radii)')
     plt.title('Planet Size vs Star Size')
@@ -82,9 +82,9 @@ def plot_data(toi_filtered, td_filtered):
     # 7. Surface Gravity vs Transit Depth
     plt.figure(figsize=(10, 6))
     plt.scatter(toi_filtered['st_logg'], toi_filtered['pl_trandep'],
-            alpha=0.5, label='TESS', s=50, color='blue')
+            alpha=0.5, label='TOI', s=50, color='blue')
     plt.scatter(td_filtered['st_logg'], td_filtered['pl_trandep'],
-            alpha=0.5, label='Kepler', s=50, color='red')
+            alpha=0.5, label='Overall', s=50, color='red')
     plt.xlabel('Stellar Surface Gravity (log g)')
     plt.ylabel('Transit Depth')
     plt.title('Transit Depth vs Surface Gravity')

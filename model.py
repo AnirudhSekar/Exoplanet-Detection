@@ -7,6 +7,7 @@ from sklearn.model_selection import cross_val_score
 from sklearn.metrics import classification_report, confusion_matrix, roc_curve, auc
 from sklearn.model_selection import train_test_split
 import seaborn as sns
+from scipy.stats import norm
 import matplotlib.pyplot as plt
 
 
@@ -56,11 +57,17 @@ def model(toi_filtered, td_filtered):
 
 
     # Cross-validation scores
-    cv_scores = cross_val_score(rf_model, X_train_scaled, y_train, cv=5)
+    cv_scores = cross_val_score(rf_model, X_train_scaled, y_train, cv=30)
     print("\nCross-validation scores:", cv_scores)
     print(f"Mean CV score: {cv_scores.mean():.4f}")
     print(f"Standard deviation: {cv_scores.std():.4f}")
 
+    # Fill with proportion confidence interval values:)
+    std = np.sqrt((cv_scores.mean() * (1 - cv_scores.mean())) / len(cv_scores))
+    error = 1.645*std
+    min = cv_scores.mean() - error
+    max = cv_scores.mean() + error
+    print("Confidence Interval (1 proportion z-interval) at 90 percent confidence: ({} , {})".format(min, max))
     # Train final model
     # Split data into train and validation sets
     X_train_split, X_val, y_train_split, y_val = train_test_split(
@@ -85,49 +92,41 @@ def model(toi_filtered, td_filtered):
     print("\nClassification Report:")
     print(classification_report(y_train, train_preds))
 
-    # ROC Curve
-    fpr, tpr, _ = roc_curve(y_train, train_probs)
-    roc_auc = auc(fpr, tpr)
-
-    plt.figure(figsize=(10, 6))
-    plt.plot(fpr, tpr, color='darkorange', lw=2, 
-            label=f'ROC curve (AUC = {roc_auc:.2f})')
-    plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
-    plt.xlim([0.0, 1.0])
-    plt.ylim([0.0, 1.05])
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title('Receiver Operating Characteristic (ROC) Curve')
-    plt.legend(loc="lower right")
-    plt.show()
-
-    # Feature importance
-    importance = pd.DataFrame({
-        'Feature': features,
-        'Importance': rf_model.feature_importances_
-    })
-    importance = importance.sort_values('Importance', ascending=False)
-
-    plt.figure(figsize=(10, 6))
-    plt.bar(importance['Feature'], importance['Importance'])
-    plt.title('Feature Importance')
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-    plt.show()
-
-    
-   # Confusion Matrix
+    # Confusion Matrix
     cm = confusion_matrix(y_train, train_preds)
-    plt.figure(figsize=(8, 6))
+    plt.figure(figsize=(10, 8))
     sns.heatmap(cm, annot=True, cmap='Blues', fmt='d')
     plt.title('Confusion Matrix')
 
-    plt.xticks([0, 1], ['Not Planet', 'Planet'], rotation=45, ha='center')
+    plt.xticks([0.5, 1.5], ['Not Planet', 'Planet'], rotation=45, ha='center')
 
-    plt.yticks([0, 1], ['Not Planet', 'Planet' ], rotation=45, va='center')
-    plt.xlabel('Predicted Label')
+    plt.yticks([0.5, 1.5], ['Not Planet', 'Planet' ], rotation=45, va='center')
+    # Bold each x and y label
+    # Show xlabel
+
+    plt.xlabel('Predicted Label', fontweight='bold')
+    plt.ylabel('True Label', fontweight='bold')
+
     
     plt.show()
+    
+    # Create figure with a standard normal distribution
+    plt.figure(figsize=(10, 6))
+    # Only go from 0.8 to 1
+    x = np.linspace(0.8, 1, 1000)
+    plt.plot(x, norm.pdf(x, cv_scores.mean(), std), label='Normal Distribution', color='black')
+
+    # Plot normal curve and shade the confidence interval
+    # Add the number 90% into the fill between
+
+    plt.fill_between(x, norm.pdf(x, cv_scores.mean(), std), where=(x > min) & (x < max), color='red')
+
+    plt.title('Normal Curve of the Confidence Interval (90% confidence)')
+    plt.show()
+
+
+    
+   
 
 
 
@@ -140,4 +139,13 @@ def model(toi_filtered, td_filtered):
     print(f"Mean: {tess_probs.mean()}, Std: {tess_probs.std()}")
     # Show top candidates
     print("\nTop TESS Candidates (Random Forest):")
-    print(toi_filtered.sort_values('rf_probability', ascending=False)[['pl_name', 'rf_probability']].head(20))
+    predictions = toi_filtered.sort_values('rf_probability', ascending=False)[['pl_name', 'rf_probability']]
+    print(predictions.head(20))
+    # Create a histogram of the frequency of probabilities from the predictions of the TESS dataset
+    plt.figure(figsize=(10, 6))
+    sns.histplot(toi_filtered['rf_probability'], kde=True)
+    plt.title('Random Forest Predictions')
+    plt.xlabel('Probability')
+    plt.ylabel('Frequency')
+    plt.show()
+
