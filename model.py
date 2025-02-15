@@ -64,10 +64,10 @@ def model(toi_filtered, td_filtered):
 
     # Fill with proportion confidence interval values:)
     std = np.sqrt((cv_scores.mean() * (1 - cv_scores.mean())) / len(cv_scores))
-    error = 1.645*std
+    error = 1.96*std
     min = cv_scores.mean() - error
     max = cv_scores.mean() + error
-    print("Confidence Interval (1 proportion z-interval) at 90 percent confidence: ({} , {})".format(min, max))
+    print("Confidence Interval (1 proportion z-interval) at 95 percent confidence: ({} , {})".format(min, max))
     # Train final model
     # Split data into train and validation sets
     X_train_split, X_val, y_train_split, y_val = train_test_split(
@@ -94,7 +94,10 @@ def model(toi_filtered, td_filtered):
 
     # Confusion Matrix
     cm = confusion_matrix(y_train, train_preds)
+
     plt.figure(figsize=(10, 8))
+    # Set font size to be 3 times larger
+    sns.set(font_scale=1.5)
     sns.heatmap(cm, annot=True, cmap='Blues', fmt='d')
     plt.title('Confusion Matrix')
 
@@ -121,7 +124,7 @@ def model(toi_filtered, td_filtered):
 
     plt.fill_between(x, norm.pdf(x, cv_scores.mean(), std), where=(x > min) & (x < max), color='red')
 
-    plt.title('Normal Curve of the Confidence Interval (90% confidence)')
+    plt.title('Normal Curve of the Confidence Interval (95% confidence)')
     plt.show()
 
 

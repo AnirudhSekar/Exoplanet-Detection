@@ -66,6 +66,6 @@ print("Cleaned Kepler size with expanded features:", len(td_filtered))
 
 # Plot Kepler and TESS Data
 
-plot_data(toi_filtered, td_filtered)
+# plot_data(toi_filtered, td_filtered)
 
 model(toi_filtered, td_filtered)
